@@ -240,19 +240,25 @@ Token *tokenize(const char *pch){
 					}
 				} else if (isdigit(*pch) || *pch == '-') {
                     int hasDot = 0;
+                    int hasE = 0;
                     if (*pch == '-') {
                         pch++;
                     }
-                    for (start = pch; isdigit(*pch) || *pch == '.'; pch++) {
+                    for (start = pch; isdigit(*pch) || *pch == '.' || *pch == 'e' || *pch == 'E' || *pch == '+' || *pch == '-'; pch++) {
                         if (*pch == '.') {
                             if (hasDot) {
                                 err("invalid number");
                             }
                             hasDot = 1;
+                        } else if (*pch == 'e' || *pch == 'E') {
+                            if (hasE) {
+                                err("invalid number");
+                            }
+                            hasE = 1;
                         }
                     }
                     char *text = extract(start, pch);
-                    if (hasDot) {
+                    if (hasDot || hasE) {
                         double val = strtod(text, &endptr);
                         if (endptr != text) {
                             addTk(DOUBLE)->d = val;
@@ -260,7 +266,7 @@ Token *tokenize(const char *pch){
                             err("invalid number");
                         }
                     } else {
-                        long val = strtol(text, &endptr,10);
+                        long val = strtol(text, &endptr, 10);
                         if (endptr != text) {
                             addTk(INT)->i = (int)val;
                         } else {
