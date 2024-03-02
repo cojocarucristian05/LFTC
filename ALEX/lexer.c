@@ -28,27 +28,26 @@ Token *addTk(int code) {
 }
 
 /**
- * 
+ * functie care extrage sirul de caractere aflat intre cei doi pointeri (start si end)
 */
-char *extract(const char *begin,const char *end){
-	size_t length = end - begin;
+char *extract(const char *begin, const char *end){
+	// calculam dimensiunea in bytes pentru noul sir
+    size_t length = end - begin;
     
-    // Allocate memory for the extracted substring
-    char *extracted = (char *)safeAlloc(length + 1); // +1 for NULL-termination
+    // alocam memorie pentru noul sir
+    char *substring = (char*)safeAlloc(length + 1); // +1 for NULL-termination
     
-    // Copy the substring from the original string to the extracted substring
-    strncpy(extracted, begin, length);
+    // copiem sirul de caractere cuprins intre pointerii start si end
+    strncpy(substring, begin, length);
     
-    // Add NULL-termination
-    extracted[length] = '\0';
+    // adaugam terminator de sir
+    substring[length] = '\0';
     
-    // Return the extracted substring
-    return extracted;
+    return substring;
 }
 
-
 /**
- * este doar un schelet, trebuie completat
+ * functie ce parcurge continutul fisierului de intrare si extrage atomii lexicali
 */
 Token *tokenize(const char *pch){
 	const char *start;
@@ -220,7 +219,6 @@ Token *tokenize(const char *pch){
    			    break;
             }
 			default: {
-
 				if(isalpha(*pch)||*pch=='_'){
 					for(start=pch++;isalnum(*pch)||*pch=='_';pch++){}
 					char *text = extract(start, pch);
@@ -282,10 +280,10 @@ Token *tokenize(const char *pch){
 }
 
 /**
- * 
+ * functie care scrie intr-un fisier atomii lexicali optinuti
 */
 void showTokens(const Token *tokens) {
-	FILE *file = fopen("lex.txt", "w"); // Deschide fișierul în modul de scriere ("w")
+	FILE *file = fopen("tests/output.txt", "w"); // Deschide fișierul în modul de scriere ("w")
     if (file == NULL) {
         printf("Eroare la deschiderea fișierului.");
         return;
@@ -336,5 +334,7 @@ void showTokens(const Token *tokens) {
         }
     }
 
-    fclose(file); // Închide fișierul
+    if(fclose(file) != 0) {
+        printf("Eroare inchidere fisier!\n");
+    }
 }
