@@ -212,7 +212,7 @@ Token *tokenize(const char *pch){
  			    for (start = ++pch; *pch && *pch != '"'; ++pch) {}
     				if (*pch == '"') {
    					     addTk(STRING)->text = extract(start, pch);
-    				    ++pch; // Trecem peste a doua ghilimeață dublă
+    				    ++pch; // Trecem peste al doilea caracter '"'
  				    } else {
    					     err("unclosed string literal");
    					}
