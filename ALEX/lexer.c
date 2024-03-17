@@ -99,6 +99,16 @@ Token *tokenize(const char *pch){
                 pch++; 
                 break;
             }
+            case '[': {
+                addTk(LBRACKET); 
+                pch++; 
+                break; 
+            }
+			case ']': {
+                addTk(RBRACKET); 
+                pch++; 
+                break;
+            }
 			case '{': {
                 addTk(LACC); 
                 pch++; 
@@ -160,7 +170,6 @@ Token *tokenize(const char *pch){
 				break;
             }
 			case '|': {
-
 				if(pch[1] == '|'){
 					addTk(OR);
 					pch += 2;

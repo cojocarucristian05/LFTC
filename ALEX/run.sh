@@ -1,10 +1,12 @@
 #!/bin/bash
 EXECUTABIL="program"
 MAIN="main.c"
-UTILS="./utils.c ./lexer.c"
+UTILS="./utils.c ./lexer.c ./parser.c"
+ARGS=$1
+echo $ARGS
 
 gcc -Wall -o $EXECUTABIL $UTILS $MAIN
 
-./$EXECUTABIL
+./$EXECUTABIL $ARGS
 
 rm $EXECUTABIL

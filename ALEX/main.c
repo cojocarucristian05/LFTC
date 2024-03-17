@@ -3,12 +3,20 @@
 
 #include "utils.h"
 #include "lexer.h"
+#include "parser.h"
 
 int main(int argc, char *argv[]) {
-    char *inbuf = loadFile("tests/testlex.c");
+    if (argc != 2) {
+        printf("Eroare argumente!\n");
+        return -1;
+    }
+    char *inbuf = loadFile(argv[1]);
     puts(inbuf);
     Token *tokens = tokenize(inbuf);
+    printf("Aici...\n");
     showTokens(tokens);
     free(inbuf);
+    printf("Aici...\n");
+    parse(tokens);
     return 0;
 }
