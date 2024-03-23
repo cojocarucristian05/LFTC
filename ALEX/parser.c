@@ -62,6 +62,7 @@ bool consume(int code) {
  * structDef: STRUCT ID LACC varDef* RACC SEMICOLON 
  */
 bool structDef() {
+	// printf("#structDef %d\n",iTk->code);//pentru debugging !!!
 	Token *start = iTk;
 	if (consume(STRUCT)) {
 		if (consume(ID)) {
@@ -73,9 +74,15 @@ bool structDef() {
 				if (consume(RACC)) {
 					if (consume(SEMICOLON)) {
 						return true;
+					} else {
+						tkerr("Lipseste ';' dupa definerea structurii");
 					}
+				} else {
+					tkerr("Lipseste '}' la finalul structurii");
 				}
 			}
+		} else {
+			tkerr("Lipseste numele structurii");
 		}
 	}
 	iTk = start;
@@ -86,13 +93,18 @@ bool structDef() {
  * varDef: typeBase ID arrayDecl? SEMICOLON
 */
 bool varDef() {
+	// printf("#varDef %d\n",iTk->code);//pentru debugging !!!
 	Token *start = iTk;
 	if (typeBase()) {
 		if (consume(ID)) {
 			if (arrayDecl()) {}
 			if (consume(SEMICOLON)) {
 				return true;
+			} else {
+				tkerr("Lipseste ';' dupa definerea variabilei");
 			}
+		} else {
+			tkerr("Lipseste numele variabilei");
 		}
 	}
 	iTk = start;
@@ -103,6 +115,7 @@ bool varDef() {
  * typeBase: TYPE_INT | TYPE_DOUBLE | TYPE_CHAR | STRUCT ID
 */
 bool typeBase() {
+	// printf("#typeBase %d\n",iTk->code);//pentru debugging !!!
 	Token *start = iTk;
 	if (consume(TYPE_INT)) {
 		return true;
@@ -116,6 +129,8 @@ bool typeBase() {
 	if (consume(STRUCT)) {
 		if (consume(ID)) {
 			return true;
+		} else {
+			tkerr("Lipseste numele structurii");
 		}
 	}
 	iTk = start;
@@ -126,11 +141,14 @@ bool typeBase() {
  * arrayDecl: LBRACKET INT? RBRACKET
 */
 bool arrayDecl() {
+	// printf("#arrayDecl %d\n",iTk->code);//pentru debugging !!!
 	Token *start = iTk;
 	if (consume(LBRACKET)) {
 		if (consume(INT)) {}
 		if (consume(RBRACKET)) {
 			return true;
+		} else {
+			tkerr("Lipseste ']' la declararea tabloului");
 		}
 	}
 	iTk = start;
@@ -143,6 +161,7 @@ bool arrayDecl() {
  *				 stmCompound
 */
 bool fnDef() {
+	// printf("#fnDef %d\n",iTk->code);//pentru debugging !!!
 	Token *start = iTk;
 	if (typeBase() || consume(VOID)) {
 		if (consume(ID)) {
@@ -151,14 +170,18 @@ bool fnDef() {
 					for (;;) {
 						if (consume(COMMA)) {
 							if (fnParam()) {}
-							else break;
-						} 
+							else return false;
+						} else break;
 					}
 				}
 				if (consume(RPAR)) {
 					if (stmCompound()) {
 						return true;
+					} else {
+						tkerr("Lipseste corpul functiei");
 					}
+				} else {
+					tkerr("Lipseste ')' la finalul functiei");
 				}
 			}
 		}
@@ -171,15 +194,18 @@ bool fnDef() {
  * fnParam: typeBase ID arrayDecl?
 */
 bool fnParam() {
+	// printf("#fnParam %d\n",iTk->code);//pentru debugging !!!
 	Token *start = iTk;
 	if (typeBase()) {
 		if (consume(ID)) {
 			if (arrayDecl()) {}
 			return true;
+		} else {
+			tkerr("Lipseste numele parametrului");
 		}
 	}
-	return false;
 	iTk = start;
+	return false;
 }
 
 /**
@@ -190,6 +216,7 @@ bool fnParam() {
  *		 | expr? SEMICOLON
 */
 bool stm() {
+	// printf("#stm %d\n",iTk->code);//pentru debugging !!!
 	Token *start = iTk;
 	if (stmCompound()) {
 		return true;
@@ -205,9 +232,16 @@ bool stm() {
 						}
 						return true;
 					}
+				} else {
+					tkerr("Lipseste ')' dupa expresie");
 				}
-			}
+			} else {
+				tkerr("Lipseste expresia");
+			} 
+		} else {
+			tkerr("Lipseste '(' inainte de expresie");
 		}
+		iTk = start;
 	}
 	if (consume(WHILE)) {
 		if (consume(LPAR)) {
@@ -216,24 +250,29 @@ bool stm() {
 					if (stm()) {
 						return true;
 					}
+				} else {
+					tkerr("Lipseste ')' dupa expresie");
 				}
-			}
+			}  else {
+				tkerr("Lipseste expresia");
+			} 
+		} else {
+			tkerr("Lipseste '(' inainte de expresie");
 		}
+		iTk = start;
 	}
 	if (consume(RETURN)) {
 		if (expr()) {}
 		if (consume(SEMICOLON)) {
 			return true;
+		} else {
+			tkerr("Lipseste ';' dupa return");
 		}
+		iTk = start;
 	}
-	if (expr()) {
-		if (consume(SEMICOLON)) {
-			return true;
-		}
-	} else {
-		if (consume(SEMICOLON)) {
-			return true;
-		}
+	if (expr()) {}
+	if (consume(SEMICOLON)) {
+		return true;
 	}
 	iTk = start;
 	return false;
@@ -243,6 +282,7 @@ bool stm() {
  * stmCompound: LACC ( varDef | stm )* RACC
 */
 bool stmCompound() {
+	// printf("#stmCompound %d\n",iTk->code);//pentru debugging !!!
 	Token *start = iTk;
 	if (consume(LACC)) {
 		for (;;) {
@@ -251,6 +291,8 @@ bool stmCompound() {
 		}
 		if (consume(RACC)) {
 			return true;
+		} else {
+			tkerr("Lipseste ')'");
 		}
 	}
 	iTk = start;
@@ -261,6 +303,7 @@ bool stmCompound() {
  * expr: exprAssign
 */
 bool expr() {
+	// printf("#expr %d\n",iTk->code);//pentru debugging !!!
 	Token *start = iTk;
 	if (exprAssign()) {
 		return true;
@@ -273,6 +316,7 @@ bool expr() {
  * exprAssign: exprUnary ASSIGN exprAssign | exprOr
 */
 bool exprAssign() {
+	// printf("#exprAssign  %d\n",iTk->code);//pentru debugging !!!
 	Token *start = iTk;
 	if (exprUnary()) {
 		if (consume(ASSIGN)) {
@@ -280,6 +324,7 @@ bool exprAssign() {
 				return true;
 			}
 		}
+		iTk = start;
 	}
 	if (exprOr()) {
 		return true;
@@ -304,6 +349,7 @@ bool exprOr(){
 }
 
 bool exprOrPrim() { //este recursiva
+    // printf("#exprOrPrim %d\n", iTk->code); // pentru debugging !!!
 	if (consume(OR)) {
 		if(exprAnd()) {
 			if(exprOrPrim()) {
@@ -321,7 +367,9 @@ bool exprAnd() {
     // printf("#exprAnd %d\n", iTk->code); // pentru debugging !!!
 	Token *start = iTk;
 	if (exprEq()) {
-        return exprAndPrim();
+		if (exprAndPrim()) {
+			return true;
+		}
     }
 
 	iTk = start;
@@ -329,6 +377,7 @@ bool exprAnd() {
 }
 
 bool exprAndPrim() {
+	// printf("#exprAndPrim %d\n", iTk->code);
     if (consume(AND)) {
         if (exprEq()) {
             if (exprAndPrim()) {
@@ -346,13 +395,16 @@ bool exprEq() {
     // printf("#exprEq %d\n", iTk->code); // pentru debugging !!!
 	Token *start = iTk;
     if (exprRel()) {
-        return exprEqPrim();
+        if (exprEqPrim()) {
+			return true;
+		}
     }
 	iTk = start;
     return false;
 }
 
 bool exprEqPrim() {
+	// printf("#exprEqPrim %d\n", iTk->code);
     if (consume(EQUAL) || consume(NOTEQ)) {
         if (exprRel()) {
             if (exprEqPrim()) {
@@ -370,13 +422,16 @@ bool exprRel() {
     // printf("#exprRel %d\n", iTk->code); // pentru debugging !!!
 	Token *start = iTk;
     if (exprAdd()) {
-        return exprRelPrim();
+        if (exprRelPrim()) {
+			return true;
+		}
     }
 	iTk = start;
     return false;
 }
 
 bool exprRelPrim() {
+	// printf("#exprRelPrim %d\n", iTk->code);
     if (consume(LESS) || consume(LESSEQ) || consume(GREATER) || consume(GREATEREQ)) {
         if (exprAdd()) {
             if (exprRelPrim()) {
@@ -395,20 +450,23 @@ bool exprAdd() {
     // printf("#exprAdd %d\n", iTk->code); // pentru debugging !!!
 	Token *start = iTk;
     if (exprMul()) {
-        return exprAddPrim();
+        if (exprAddPrim()) {
+			return true;
+		}
     }
 	iTk = start;
     return false;
 }
 
 bool exprAddPrim() {
+	// printf("#exprAddPrim %d\n", iTk->code);
     if (consume(ADD) || consume(SUB)) {
         if (exprMul()) {
             if (exprAddPrim()) {
                 return true;
             }
         }
-    }
+    } 
     return true; // epsilon-ul nostru
 }
 
@@ -417,16 +475,19 @@ bool exprAddPrim() {
  * exprMul: exprMul ( MUL | DIV ) exprCast | exprCast
 */
 bool exprMul() {
-    printf("#exprMul %d\n", iTk->code); // pentru debugging !!!
+    // printf("#exprMul %d\n", iTk->code); // pentru debugging !!!
 	Token *start = iTk;
     if (exprCast()) {
-        return exprMulPrim();
+        if (exprMulPrim()) {
+			return true;
+		}
     }
 	iTk = start;
     return false;
 }
 
 bool exprMulPrim() {
+	// printf("#exprMulPrim %d\n", iTk->code);
     if (consume(MUL) || consume(DIV)) {
         if (exprCast()) {
             if (exprMulPrim()) {
@@ -442,7 +503,7 @@ bool exprMulPrim() {
  * exprCast: LPAR typeBase arrayDecl? RPAR exprCast | exprUnary
 */
 bool exprCast() {
-	printf("#exprCast %d\n", iTk->code); // pentru debugging !!!
+	// printf("#exprCast %d\n", iTk->code); // pentru debugging !!!
 	Token *start = iTk;
 	if (consume(LPAR)) {
 		if (typeBase()) {
@@ -451,6 +512,7 @@ bool exprCast() {
 				return exprCast();
 			}
 		}
+		iTk = start;
 	}
 	if (exprUnary()) {
 		return true;
@@ -463,12 +525,13 @@ bool exprCast() {
  * exprUnary: ( SUB | NOT ) exprUnary | exprPostfix
 */
 bool exprUnary() {
-	printf("#exprUnary %d\n",iTk->line);
+	// printf("#exprUnary %d\n",iTk->line);
 	Token *start = iTk;
 	if (consume(SUB) || consume(NOT)) {
 		if (exprUnary()) {
 			return true;
 		} 
+		iTk = start;
 	}
 	if (exprPostfix()) {
 		return true;
@@ -483,16 +546,20 @@ bool exprUnary() {
  *		| exprPrimary
 */
 bool exprPostfix() {
-    printf("#exprPostfix %d\n", iTk->code); // pentru debugging !!!
+    // printf("#exprPostfix %d\n", iTk->code); // pentru debugging !!!
 	Token *start = iTk;
     if (exprPrimary()) {
-        return exprPostfixPrim();
+        if (exprPostfixPrim()) {
+			return true;
+		}
     }
 	iTk = start;
     return false;
 }
 
 bool exprPostfixPrim() {
+	// printf("#exprPostfixPrim %d\n", iTk->code);
+	Token *start = iTk;
     if (consume(LBRACKET)) {
         if (expr()) {
             if (consume(RBRACKET)) {
@@ -501,6 +568,7 @@ bool exprPostfixPrim() {
                 }
             }
         }
+		iTk = start;
     }
 
     if (consume(DOT)) {
@@ -509,6 +577,7 @@ bool exprPostfixPrim() {
                 return true;
             }
         }
+		iTk = start;
     }
 
     return true; // epsilon-ul nostru
@@ -520,6 +589,7 @@ bool exprPostfixPrim() {
  *		| INT | DOUBLE | CHAR | STRING | LPAR expr RPAR
 */
 bool exprPrimary() {
+	// printf("#exprPrimary %d\n", iTk->code);
 	Token *start = iTk;
 	if (consume(ID)) {
 		if (consume(LPAR)) {
@@ -528,12 +598,14 @@ bool exprPrimary() {
 					if (consume(COMMA)) {
 						if (expr()) {} 
 						else return false;
-					}
+					} else break;
 				}
 				if (consume(RPAR)) {}
 				else return false;
 			}
 		}
+		// iTk = start;
+		return true;
 	}
 	if (consume(INT)) {
 		return true;
@@ -551,8 +623,13 @@ bool exprPrimary() {
 		if (expr()) {
 			if (consume(RPAR)) {
 				return true;
+			} else {
+				tkerr("Lipseste ')' la finalul expresiei");
 			}
+		} else {
+			tkerr("Lipseste expresia");
 		}
+		iTk = start;
 	}
 	iTk = start;
 	return false;
@@ -570,13 +647,13 @@ bool unit() {
 	}
 	if (consume(END)) {
 		return true;
+	} else {
+		tkerr("Syntax error");
 	}
 	return false;
 }
 
 void parse(Token *tokens){
 	iTk = tokens;
-	if (!unit()) { 
-		tkerr("syntax error");
-	}
+	if (!unit()) {}
 }

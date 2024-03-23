@@ -11,12 +11,10 @@ int main(int argc, char *argv[]) {
         return -1;
     }
     char *inbuf = loadFile(argv[1]);
-    puts(inbuf);
+    // puts(inbuf);
     Token *tokens = tokenize(inbuf);
-    printf("Aici...\n");
-    showTokens(tokens);
+    // showTokens(tokens);
     free(inbuf);
-    printf("Aici...\n");
     parse(tokens);
     return 0;
 }
