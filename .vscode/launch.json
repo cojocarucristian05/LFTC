@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/cojoc/Dropbox/PC/Desktop/CTI_AN_3/LFTC/ALEX/tests",
-      "program": "c:/Users/cojoc/Dropbox/PC/Desktop/CTI_AN_3/LFTC/ALEX/tests/build/Debug/outDebug",
+      "cwd": "c:/Users/cojoc/Dropbox/PC/Desktop/CTI_AN_3/LFTC/ATOM_C_COMPILER",
+      "program": "c:/Users/cojoc/Dropbox/PC/Desktop/CTI_AN_3/LFTC/ATOM_C_COMPILER/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
