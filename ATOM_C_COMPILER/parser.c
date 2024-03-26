@@ -170,7 +170,7 @@ bool fnDef() {
 					for (;;) {
 						if (consume(COMMA)) {
 							if (fnParam()) {}
-							else return false;
+							else tkerr("Lipseste parametrul functiei dupa ,");
 						} else break;
 					}
 				}
@@ -184,6 +184,8 @@ bool fnDef() {
 					tkerr("Lipseste ')' la finalul functiei");
 				}
 			}
+		} else {
+			tkerr("Lipseste numele functiei");
 		}
 	}
 	iTk = start;
@@ -322,6 +324,8 @@ bool exprAssign() {
 		if (consume(ASSIGN)) {
 			if (exprAssign()) {
 				return true;
+			} else {
+				tkerr("Lipseste expresia dupa semnul =");
 			}
 		}
 		iTk = start;
@@ -355,6 +359,8 @@ bool exprOrPrim() { //este recursiva
 			if(exprOrPrim()) {
 				return true;
 			}
+		} else {
+			tkerr("Lipseste expresia dupa semnul '||'");
 		}
 	}
 	return true; //epsilon-ul nostru
@@ -383,7 +389,9 @@ bool exprAndPrim() {
             if (exprAndPrim()) {
                 return true;
             }
-        }
+        } else {
+			tkerr("Lipseste expresia dupa semnul '&&'");
+		}
     }
     return true; // epsilon-ul nostru
 }
@@ -410,7 +418,9 @@ bool exprEqPrim() {
             if (exprEqPrim()) {
                 return true;
             }
-        }
+        } else {
+			tkerr("Lipseste expresia dupa '== ' sau '!='");
+		}
     }
     return true; // epsilon-ul nostru
 }
@@ -437,7 +447,9 @@ bool exprRelPrim() {
             if (exprRelPrim()) {
                 return true;
             }
-        }
+        } else {
+			tkerr("Lipseste expresia dupa semnul '<' sau '>' sau '<=' sau '>=");
+		}
     }
     return true; // epsilon-ul nostru
 }
@@ -465,7 +477,9 @@ bool exprAddPrim() {
             if (exprAddPrim()) {
                 return true;
             }
-        }
+        } else {
+			tkerr("Lipseste expresia dupa semnul '+'");
+		}
     } 
     return true; // epsilon-ul nostru
 }
@@ -493,7 +507,9 @@ bool exprMulPrim() {
             if (exprMulPrim()) {
                 return true;
             }
-        }
+        } else {
+			tkerr("Lipseste expresia dupa semnul '*'");
+		}
     }
     return true; // epsilon-ul nostru
 }
@@ -510,7 +526,11 @@ bool exprCast() {
 			if (arrayDecl()) {}
 			if (consume(RPAR)) {
 				return exprCast();
+			} else {
+				tkerr("Lipseste ')'");
 			}
+		} else {
+			tkerr("Lipseste expresia dupa semnul '}'");
 		}
 		iTk = start;
 	}
@@ -530,7 +550,9 @@ bool exprUnary() {
 	if (consume(SUB) || consume(NOT)) {
 		if (exprUnary()) {
 			return true;
-		} 
+		} else {
+			tkerr("Expresoe invalida dupa '-' sau '!'");
+		}
 		iTk = start;
 	}
 	if (exprPostfix()) {
@@ -565,8 +587,12 @@ bool exprPostfixPrim() {
             if (consume(RBRACKET)) {
                 if (exprPostfixPrim()) {
                     return true;
-                }
-            }
+                } else {
+					tkerr("Expresie invalida dupa ']'");
+				}
+            } else {
+				tkerr("Lipseste ']' dupa expresie");
+			}
         }
 		iTk = start;
     }
@@ -575,8 +601,12 @@ bool exprPostfixPrim() {
         if (consume(ID)) {
             if (exprPostfixPrim()) {
                 return true;
-            }
-        }
+            } else {
+				tkerr("Lipseste expresia dupa nume campului");
+			}
+        } else {
+			tkerr("Lipseste numele campului ce se doreste a fi cautat");
+		}
 		iTk = start;
     }
 
@@ -597,11 +627,15 @@ bool exprPrimary() {
 				for (;;) {
 					if (consume(COMMA)) {
 						if (expr()) {} 
-						else return false;
+						else {
+							tkerr("Lipseste expresia ','");
+						};
 					} else break;
 				}
 				if (consume(RPAR)) {}
-				else return false;
+				else {
+					tkerr("Lipseste ')' in apelul functiei");
+				}
 			}
 		}
 		// iTk = start;
