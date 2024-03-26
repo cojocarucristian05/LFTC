@@ -272,7 +272,13 @@ bool stm() {
 		}
 		iTk = start;
 	}
-	if (expr()) {}
+	if (expr()) {
+		if (consume(SEMICOLON)) {
+			return true;
+		} else {
+			tkerr("Lipseste ';'");
+		}
+	}
 	if (consume(SEMICOLON)) {
 		return true;
 	}
@@ -294,7 +300,7 @@ bool stmCompound() {
 		if (consume(RACC)) {
 			return true;
 		} else {
-			tkerr("Lipseste ')'");
+			tkerr("Lipseste '}'");
 		}
 	}
 	iTk = start;
@@ -628,14 +634,16 @@ bool exprPrimary() {
 					if (consume(COMMA)) {
 						if (expr()) {} 
 						else {
-							tkerr("Lipseste expresia ','");
+							tkerr("Lipseste expresia dupa ','");
 						};
 					} else break;
 				}
-				if (consume(RPAR)) {}
-				else {
-					tkerr("Lipseste ')' in apelul functiei");
-				}
+			}
+			if (consume(RPAR)) {
+				return true;
+			}
+			else {
+				tkerr("Lipseste ')' in apelul functiei");
 			}
 		}
 		// iTk = start;
