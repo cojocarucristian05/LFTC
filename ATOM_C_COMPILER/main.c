@@ -4,6 +4,8 @@
 #include "utils.h"
 #include "lexer.h"
 #include "parser.h"
+#include "ad.h"
+#include "vm.h"
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
@@ -15,6 +17,13 @@ int main(int argc, char *argv[]) {
     Token *tokens = tokenize(inbuf);
     // showTokens(tokens);
     free(inbuf);
+
+    pushDomain();
+    
     parse(tokens);
+    
+    showDomain(symTable, "global");
+    dropDomain();
+    
     return 0;
 }

@@ -101,6 +101,8 @@ void freeSymbol(Symbol *s) {
 			freeSymbols(s->structMembers);
 			break;
 		}
+		default:
+			break;
 	}
 	free(s);
 }
@@ -140,6 +142,7 @@ void showNamedType(Type *t, const char *name) {
 		} 
 		default:		// TB_STRUCT
 			printf("struct %s", t->s->name);
+			break;
 		}
 	if(name) {
 		printf(" %s", name);
