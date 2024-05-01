@@ -220,7 +220,7 @@ Symbol *findSymbolInDomain(Domain *d, const char *name) {
 
 Symbol *findSymbol(const char *name) {
 	for (Domain *d = symTable; d; d = d->parent) {
-		Symbol *s = findSymbolInDomain(d,name);
+		Symbol *s = findSymbolInDomain(d, name);
 		if (s) {
 			return s;
 		}

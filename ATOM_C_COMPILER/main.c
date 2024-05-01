@@ -19,11 +19,16 @@ int main(int argc, char *argv[]) {
     free(inbuf);
 
     pushDomain();
-    
+    vmInit();
+
     parse(tokens);
     
-    showDomain(symTable, "global");
+    // showDomain(symTable, "global");
+    // Instr *testCode = genTestProgram(); // genereaza cod de test pentru masina virtuala
+    Instr *testCode = temaMasinaVirtuala();
+    run(testCode); // executie cod masina virtuala
     dropDomain();
     
+    printf("\n");
     return 0;
 }
