@@ -68,7 +68,7 @@ void pushd(double f){
 	(++SP)->f = f;
 }
 
-int popd(){
+float popd(){
 	if (SP == stack - 1) {
 		err("trying to pop from empty stack");
 	}
@@ -94,7 +94,7 @@ void put_i() {
 }
 
 void put_d() {
-	printf("=> %d", popd());
+	printf("=> %f", popd());
 }
 
 void vmInit() {
@@ -124,7 +124,7 @@ void run(Instr *IP) {
 				break;
 			}
 			case OP_PUSH_D: {
-				printf("PUSH.f\t%g", IP->arg.f);
+				printf("PUSH.f\t%f", IP->arg.f);
 				pushd(IP->arg.f);
 				IP = IP->next;
 				break;
@@ -210,7 +210,7 @@ void run(Instr *IP) {
 			case OP_LESS_D: {
 				fTop = popd();
 				fBefore = popd();
-				pushd(fBefore < fTop);
+				pushi(fBefore < fTop);
 				printf("LESS.f\t// %g<%g -> %d", fBefore, fTop, (fBefore < fTop) ? 1 : 0);
 				IP = IP->next;
 				break;
