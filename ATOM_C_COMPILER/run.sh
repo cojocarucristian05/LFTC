@@ -1,7 +1,7 @@
 #!/bin/bash
 EXECUTABIL="program"
 MAIN="main.c"
-UTILS="./utils.c ./lexer.c ./vm.c ./ad.c ./at.c ./parser.c"
+UTILS="./utils.c ./lexer.c ./ad.c ./at.c ./vm.c ./gc.c ./parser.c"
 ARGS=$1
 
 gcc -Wall -o $EXECUTABIL $UTILS $MAIN

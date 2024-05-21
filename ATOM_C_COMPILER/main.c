@@ -22,13 +22,28 @@ int main(int argc, char *argv[]) {
     vmInit();
 
     parse(tokens);
+
+    // // showDomain(symTable, "global");
+    // // Instr *testCode = genTestProgram(); // genereaza cod de test pentru masina virtuala
     
-    // showDomain(symTable, "global");
-    // Instr *testCode = genTestProgram(); // genereaza cod de test pentru masina virtuala
-    Instr *testCode = temaMasinaVirtuala();
-    run(testCode); // executie cod masina virtuala
-    dropDomain();
+
+    /* testare masina virtuala */
+    // Instr *testCode = temaMasinaVirtuala();
+    // run(testCode); // executie cod masina virtuala
+    // dropDomain();
     
+    // parse(tokens);
+    /* testare generare de cod */
+    Symbol *symMain = findSymbolInDomain(symTable, "main");
+    if (!symMain) {
+        err("missing main function");
+    }
+    Instr *entryCode = NULL;
+    addInstr(&entryCode, OP_CALL)->arg.instr = symMain->fn.instr;
+    addInstr(&entryCode, OP_HALT);
+    run(entryCode);
+    // dropDomain();
+
     printf("\n");
     return 0;
 }
