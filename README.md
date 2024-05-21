@@ -1,2 +1,2 @@
-### ATOM C COMPILER - PROJECT YEAR 3, 2nd SEMESTER 
+### ATOM C COMPILER - PROJECT year 3, 2nd semester 
 ### © Cojocaru Cristian
